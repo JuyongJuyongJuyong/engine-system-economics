@@ -20,10 +20,24 @@ The project's non-negotiable constraint is **no backend server** — everything 
 ## Interface contracts (the part that must not silently drift between repos)
 
 - **`engine-radiation-uncertainty` exports**: a function taking `{ lat, lng, tier }` (or equivalent) and returning `{ kWh_per_m2_per_year, uncertainty_ci_90 }` plus whatever intermediate values `engine-system-economics` needs (e.g. clearness index, transposition factor).
-- **`engine-system-economics` exports**: a function taking the roof polygon (`[lat, lng][]`), roof metadata (shape, material, shading tap), and the radiation-package output, returning the final `{ kWh, savings, co2, uncertainty_ci_90 }` shown in the UI.
+- **`engine-system-economics` v1 exports**: async `getSystemEconomics(input)`, taking the geographic roof polygon, descriptive roof metadata, location, `radiationTier`, optional independent `dataTier`, power access, and optional self-consumption tap. It internally calls Radiation v0.1.2 exactly once with `{ lat: location.lat, lng: location.lng, tier: radiationTier }`. No surface overrides or fabricated roof planes are used. The canonical surface is a disclosed fallback. See README.md for the current foundation-only output; final electrical/economic metrics remain unavailable until their models exist.
 - **`app-rooftop-solar` calls**: only `engine-system-economics` directly — it never needs to know `engine-radiation-uncertainty` exists, keeping the UI's dependency surface to one package.
 
+Economics 0.4.0 adds optional physical-model parameters. With layout, annual
+electrical kWh is returned, alongside explicit physical factors and elevation
+provider diagnostics; without layout, the foundation-only result remains.
+Economics 0.5.0 adds optional sourced `economics` and `emissions` inputs, annual
+cash flows, scenario metrics, ROI and payback. No external tariff/emissions
+providers are called. Final savings confidence intervals remain unavailable;
+provisional physical labels are preserved. See ECONOMICS_MODEL.md. This
+supersedes the foundation-output wording above without changing the Radiation call.
+
 Any change to these shapes needs a version bump on the exporting package's GitHub Release tag and a coordinated PR on the consuming side that updates the pinned tag — this replaces the "coordinate via PR description" note from the single-repo CLAUDE.md, since a cross-repo interface change can no longer be reviewed in one diff.
+
+Economics 0.3.0 adds optional `layout` with explicit module dimensions/rating,
+edge clearance and geographic keep-out polygons. It also exports pure
+`calculatePanelLayout`. Layout is a horizontal-footprint estimate and does not
+change the Radiation call or introduce roof-plane inputs. Consumers may omit it.
 
 ## Per-repo setup checklist
 

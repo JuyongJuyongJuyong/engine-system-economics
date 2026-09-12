@@ -9,6 +9,27 @@ Owner: B (sole owner — see repo's CODEOWNERS).
 - Never claim precision the data doesn't support — every exported result carries an uncertainty range and a comment citing its data source.
 
 ## Scope — physics AND math, not one or the other
+
+### Finalized v1 scope and implementation sequence
+
+App calls Economics; Economics calls Radiation v0.1.2 internally, asynchronously,
+exactly once with location and radiationTier. Never pass tiltDeg or azimuthDeg in
+v1. Canonical surface is a disclosed fallback, shape is descriptive only, and
+longest-edge bearing must not become roof-facing azimuth. No public planes or
+capacityFraction. dataTier is independent and must never be inferred from
+radiationTier. Start with types, integration, location consistency, polygon
+validation, geometry, provenance, warnings, uncertainty foundations and tests.
+Layout and first annual thermal/elevation models now exist; see PHYSICAL_MODEL.md.
+Do not claim measured climate, calibrated uncertainty, or full hourly performance.
+Explicit-input tariff, ROI, savings and CO2 are implemented; see ECONOMICS_MODEL.md.
+No tariff/emissions providers or calibrated financial confidence intervals exist.
+Zero-area retraced spikes and consecutive duplicates are repaired with warnings;
+ambiguous crossings/touching lobes are rejected. Optional layout uses explicit
+panel specifications, local WGS84 meter coordinates, keep-outs and bounded grids.
+It must not affect the one canonical Radiation call or fabricate roof planes.
+The provisional orientation scenario envelope is not a validated
+system confidence interval. Do not claim the accuracy targets are achieved.
+
 - **Physics**: performance ratio modeled from local temperature + aridity (thermal, not hardcoded at 0.75), elevation correction, roof-polygon geometry — panel-layout optimization (2D bin-packing: fit standard panel rectangles into the roof polygon minus keep-out zones for vents/chimneys, replacing the naive `area × packing_factor` assumption) and geodesic area/azimuth (Leaflet is Web Mercator, not equal-area — use a geodesic area function on the raw lat/lng polygon, not projected coordinates; derive azimuth from the polygon's longest-edge bearing; correct self-intersecting polygons first).
 - **Math**: ROI (amortization with panel degradation ~0.5–0.8%/yr + local tariff escalation — both required for an honest lifetime number), savings/self-consumption modeling (`savings = E × self_consumption × tariff`, `self_consumption = 1.0` under net metering), CO2 impact, tariff data integration.
 
@@ -34,7 +55,7 @@ Owner: B (sole owner — see repo's CODEOWNERS).
 
 ## Interface
 - **Consumes** (`engine-radiation-uncertainty`): `{ kWh_per_m2_per_year, uncertainty_ci_90, ...intermediates }`.
-- **Exports** (consumed by `app-rooftop-solar`): a function taking the roof polygon (`[lat, lng][]`), roof metadata (shape, material, shading tap), power-access/self-consumption taps, and location, returning `{ kWh, savings, co2, uncertainty_ci_90 }`.
+- **Exports** (consumed by `app-rooftop-solar`): async `getSystemEconomics` with input in `src/types.ts`, plus optional layout, physical, economics and emissions parameters. The app does not provide radiation. Layout enables annual electrical kWh with separate physical/elevation diagnostics; otherwise kWh stays null. Explicit sourced inputs enable optional economic metrics. See README.md, PHYSICAL_MODEL.md and ECONOMICS_MODEL.md.
 - Any change to either shape needs a version bump and a coordinated PR on the affected side.
 
 ## Before merging any PR
