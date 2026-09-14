@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Terrain browser smoke test</title>
+<h1>Terrain browser smoke test</h1><button id="run">Run Terrarium CORS and pixel test</button><pre id="result">Ready</pre>
+<script type="module">
+import { createElevationResolver } from '../dist/elevation.js';
+document.querySelector('#run').onclick = async () => {
+  document.querySelector('#result').textContent = 'Running';
+  const resolve = createElevationResolver({ fetch: (url, options) => {
+    if (!String(url).startsWith('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/')) throw new Error('Primary only smoke test');
+    return fetch(url, options);
+  }});
+  const r = await resolve({ lat: 37.5, lng: 127 }, 3);
+  document.querySelector('#result').textContent = JSON.stringify(r, null, 2);
+};
+</script></html>

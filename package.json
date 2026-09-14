@@ -1,6 +1,6 @@
 {
   "name": "engine-system-economics",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "System performance (thermal PR, elevation correction, roof-polygon bin-packing, geodesic area/azimuth) and economics (ROI amortization, savings, CO2) for the Global Rooftop Solar Potential Calculator. Consumes engine-radiation-uncertainty's output.",
   "type": "module",
   "main": "./dist/index.js",
@@ -23,13 +23,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json"
   },
   "dependencies": {
-    "engine-radiation-uncertainty": "github:JuyongJuyongJuyong/engine-radiation-uncertainty#v0.1.1"
+    "clipper-lib": "^6.4.2",
+    "engine-radiation-uncertainty": "github:JuyongJuyongJuyong/engine-radiation-uncertainty#v0.1.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/clipper-lib": "^6.4.0",
     "eslint": "^9.9.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0",
