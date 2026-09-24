@@ -1,5 +1,5 @@
-import type { ElevationOptions, ElevationResult } from './elevation';
-import type { PanelLayoutResult } from './types';
+import type { ElevationOptions, ElevationResult } from './elevation.js';
+import type { PanelLayoutResult } from './types.js';
 
 export interface PhysicalOptions {
   /** Caller-supplied representative daylight values, not annual irradiation divided by 8760. */

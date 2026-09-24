@@ -68,11 +68,13 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run test:package
 ```
 
-The dependency remains Git-tag pinned to Radiation v0.1.2. The package version
-is bumped to 0.5.0 for the explicit-input economics API; no release is published by this
-change. See [ECONOMICS_MODEL.md](ECONOMICS_MODEL.md) for input examples, category
+The dependency remains Git-tag pinned to Radiation v0.1.2. Version 0.5.0 introduced
+the explicit-input economics API. Patch 0.5.1 fixes direct Node ESM loading without
+changing that API or model assumptions; no tag is created by this change.
+See [ECONOMICS_MODEL.md](ECONOMICS_MODEL.md) for input examples, category
 assumptions, lifetime savings, ROI/payback, emissions, units and scenario propagation.
 Provider integration, measured roof planes and full installation design remain
 subsequent phases. See PHYSICAL_MODEL.md for physical formulas, defaults, calibration
@@ -143,3 +145,22 @@ fixed candidate budget. `NO_PANELS_FIT` means this search found none, not a proo
 of global infeasibility. Numerical precision does not imply surveyed accuracy;
 callers must supply actual installation clearances.
 Identical inputs produce identical ordering and layouts.
+
+## 0.5.1 package compatibility fix
+
+Production TypeScript uses NodeNext with explicit `.js` relative specifiers so
+emitted JavaScript and declarations follow Node ESM resolution. Vitest's test
+configuration retains Bundler resolution for its source tests.
+
+The build then bundles the public runtime entry as ESM using esbuild, including
+the pinned Radiation implementation. Radiation v0.1.2 itself emits extensionless
+imports, so fixing only Economics imports would still fail in native Node.
+Clipper remains an external dependency, compatible with both Node and browser
+bundlers. No node_modules files or published tags are patched. Public exports,
+declarations, async call flow and one internal Radiation call remain unchanged.
+
+`npm run test:package` builds and imports the package by name through Node's native
+loader, checks runtime exports, exercises layout/Clipper, and verifies async input
+validation without live data calls. CI runs this separately from Vitest so a
+bundler cannot conceal package-resolution failures. This verifies importability,
+not browser-specific elevation APIs or live provider availability in Node.
