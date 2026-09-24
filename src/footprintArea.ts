@@ -1,4 +1,4 @@
-import type { GeoPoint } from './projection';
+import type { GeoPoint } from './projection.js';
 
 /** Isolated spherical geographic area provider. Replace with ellipsoidal geodesics
  * without changing layout: layout area uses its own local metric and is labeled.

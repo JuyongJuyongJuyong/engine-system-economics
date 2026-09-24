@@ -1,6 +1,6 @@
-import type { PhysicalOptions, PhysicalResult } from './physical';
-import type { ElevationResult } from './elevation';
-import type { EconomicsOptions, EmissionsOptions, EconomicsResult, ScenarioMetric } from './economics';
+import type { PhysicalOptions, PhysicalResult } from './physical.js';
+import type { ElevationResult } from './elevation.js';
+import type { EconomicsOptions, EmissionsOptions, EconomicsResult, ScenarioMetric } from './economics.js';
 export interface RoofMetadata {
   shape: 'flat' | 'gable' | 'unknown';
   material: string;

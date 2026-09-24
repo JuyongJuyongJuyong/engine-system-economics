@@ -1,4 +1,4 @@
-import type { GeoPoint } from './projection';
+import type { GeoPoint } from './projection.js';
 
 /** Only zero-area drawing artifacts have unambiguous automatic repairs.
  * Proper crossings (including bow ties), touching lobes and disconnected regions

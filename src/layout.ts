@@ -1,7 +1,7 @@
 import C from 'clipper-lib';
-import { deriveGeometry } from './geometry';
-import { createLocalProjection, type GeoPoint } from './projection';
-import type { PanelLayoutOptions, PanelLayoutResult } from './types';
+import { deriveGeometry } from './geometry.js';
+import { createLocalProjection, type GeoPoint } from './projection.js';
+import type { PanelLayoutOptions, PanelLayoutResult } from './types.js';
 
 // Micrometer clipping avoids losing entire rows to artificial millimeter setbacks.
 // Boundary contact is accepted at this numerical resolution; no installation tolerance inferred.

@@ -1,17 +1,17 @@
 import { getRadiationEstimate } from 'engine-radiation-uncertainty';
-import { deriveGeometry } from './geometry';
-import { calculatePanelLayout } from './layout';
-import { calculatePhysicalEnergy, validatePhysical } from './physical';
-import { resolveElevation } from './elevation';
-import { calculateEconomics, validateEconomics } from './economics';
-export { calculateEconomics } from './economics';
-export type { EconomicsOptions, EmissionsOptions, EconomicsResult, SourcedValue, ScenarioMetric, AnnualEconomics } from './economics';
-export type { PhysicalOptions, PhysicalResult } from './physical';
-export type { ElevationOptions, ElevationResult } from './elevation';
-export { calculatePanelLayout } from './layout';
-export type { KeepOutZone, PanelLayoutOptions, PanelLayoutResult } from './types';
-import type { SystemEconomicsInput, SystemEconomicsOutput } from './types';
-export type { RoofMetadata, SystemEconomicsInput, SystemEconomicsOutput, Assumption } from './types';
+import { deriveGeometry } from './geometry.js';
+import { calculatePanelLayout } from './layout.js';
+import { calculatePhysicalEnergy, validatePhysical } from './physical.js';
+import { resolveElevation } from './elevation.js';
+import { calculateEconomics, validateEconomics } from './economics.js';
+export { calculateEconomics } from './economics.js';
+export type { EconomicsOptions, EmissionsOptions, EconomicsResult, SourcedValue, ScenarioMetric, AnnualEconomics } from './economics.js';
+export type { PhysicalOptions, PhysicalResult } from './physical.js';
+export type { ElevationOptions, ElevationResult } from './elevation.js';
+export { calculatePanelLayout } from './layout.js';
+export type { KeepOutZone, PanelLayoutOptions, PanelLayoutResult } from './types.js';
+import type { SystemEconomicsInput, SystemEconomicsOutput } from './types.js';
+export type { RoofMetadata, SystemEconomicsInput, SystemEconomicsOutput, Assumption } from './types.js';
 
 /** Foundation API: exactly one canonical Radiation request after local validation. */
 export async function getSystemEconomics(input: SystemEconomicsInput): Promise<SystemEconomicsOutput> {

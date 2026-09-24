@@ -1,4 +1,4 @@
-import type { PhysicalResult } from './physical';
+import type { PhysicalResult } from './physical.js';
 
 /** Bounds are caller-justified scenarios, not a probability distribution or CI. */
 export interface SourcedValue { value: number; source: string; range?: [number, number] }

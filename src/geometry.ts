@@ -1,6 +1,6 @@
-import type { SystemEconomicsInput, SystemEconomicsOutput } from './types';
-import { repairDrawingArtifacts } from './repair';
-import { geographicFootprintArea } from './footprintArea';
+import type { SystemEconomicsInput, SystemEconomicsOutput } from './types.js';
+import { repairDrawingArtifacts } from './repair.js';
+import { geographicFootprintArea } from './footprintArea.js';
 
 // IUGG mean Earth radius (2a+b)/3. Spherical foundation, not survey accuracy.
 const rad = Math.PI / 180;
