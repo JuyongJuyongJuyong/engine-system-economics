@@ -13,7 +13,7 @@ Owner: B (sole owner — see repo's CODEOWNERS).
 ### Finalized v1 scope and implementation sequence
 
 App calls Economics; Economics calls Radiation v0.1.2 internally, asynchronously,
-exactly once with location and radiationTier. Never pass tiltDeg or azimuthDeg in
+exactly once after successful local validation with explicit location and radiationTier. Never pass tiltDeg or azimuthDeg in
 v1. Canonical surface is a disclosed fallback, shape is descriptive only, and
 longest-edge bearing must not become roof-facing azimuth. No public planes or
 capacityFraction. dataTier is independent and must never be inferred from
@@ -28,7 +28,13 @@ ambiguous crossings/touching lobes are rejected. Optional layout uses explicit
 panel specifications, local WGS84 meter coordinates, keep-outs and bounded grids.
 It must not affect the one canonical Radiation call or fabricate roof planes.
 The provisional orientation scenario envelope is not a validated
-system confidence interval. Do not claim the accuracy targets are achieved.
+system confidence interval. Top-level uncertainty_ci_90 is null; savings/co2 are
+nullable metric objects, not bare numbers. Do not claim the accuracy targets are achieved.
+
+Reconciled against app main `5db2fff` and Radiation main `436b0cf` on 2026-09-22.
+Canonical App → Economics → Radiation and no-plane scope agree. Do not copy
+the app CLAUDE.md's stale gable 50/50 azimuth instruction or sibling architecture's
+final-CI widening wording: see ARCHITECTURE.md for the remaining handoff differences.
 
 - **Physics**: performance ratio modeled from local temperature + aridity (thermal, not hardcoded at 0.75), elevation correction, roof-polygon geometry — panel-layout optimization (2D bin-packing: fit standard panel rectangles into the roof polygon minus keep-out zones for vents/chimneys, replacing the naive `area × packing_factor` assumption) and geodesic area/azimuth (Leaflet is Web Mercator, not equal-area — use a geodesic area function on the raw lat/lng polygon, not projected coordinates; derive azimuth from the polygon's longest-edge bearing; correct self-intersecting polygons first).
 - **Math**: ROI (amortization with panel degradation ~0.5–0.8%/yr + local tariff escalation — both required for an honest lifetime number), savings/self-consumption modeling (`savings = E × self_consumption × tariff`, `self_consumption = 1.0` under net metering), CO2 impact, tariff data integration.
@@ -48,14 +54,15 @@ system confidence interval. Do not claim the accuracy targets are achieved.
 - **Tier 3**: minimal-tap fallback, widest stated uncertainty range, manual overrides available.
 - Elevation correction applies in ALL tiers via the pool above — don't gate behind Tier 1.
 
-## Accuracy target (already validated by Monte Carlo — don't re-derive, just hit it)
+## Historical project accuracy targets (not established for this implementation)
 - Tier 1: ~±11% savings (90% CI)
 - Tier 3: ~±24% savings (90% CI)
-- If a change measurably worsens these, treat it as a regression.
+- Preserve these project targets; do not re-derive or force intervals to meet them. The current scenario tests do not validate statistical coverage. Treat measurable regressions against validated reference cases as problems.
 
 ## Interface
-- **Consumes** (`engine-radiation-uncertainty`): `{ kWh_per_m2_per_year, uncertainty_ci_90, ...intermediates }`.
+- **Calls internally**: async `getRadiationEstimate({ lat, lng, tier })` from Radiation v0.1.2, once after successful validation. The app supplies no precomputed Radiation input. The internal response contains annual POA, its interval and optional clearness/transposition diagnostics.
 - **Exports** (consumed by `app-rooftop-solar`): async `getSystemEconomics` with input in `src/types.ts`, plus optional layout, physical, economics and emissions parameters. The app does not provide radiation. Layout enables annual electrical kWh with separate physical/elevation diagnostics; otherwise kWh stays null. Explicit sourced inputs enable optional economic metrics. See README.md, PHYSICAL_MODEL.md and ECONOMICS_MODEL.md.
+- Explicit location must fall inside/on the validated polygon. radiationTier is required; dataTier is optional and independent. No public planes, capacityFraction, tiltDeg or azimuthDeg. Full inputs/outputs are defined in src/types.ts; shape never fabricates orientation.
 - Any change to either shape needs a version bump and a coordinated PR on the affected side.
 
 ## Before merging any PR
